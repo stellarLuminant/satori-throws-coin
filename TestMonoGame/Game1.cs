@@ -20,12 +20,15 @@ namespace TestMonoGame
         private const float COIN_COOLDOWN = 0.15f;
         private float lastCoinThrow;
         private List<Coin> coins;
-        private Texture2D coinTexture;
+        private Texture2D[] coinTextures;
 
         // store
         private Vector2 storePosition = new Vector2(600, 200);
         private Texture2D storeTexture;
         private Vector2 storeOrigin;
+
+        // coin options
+        private int coinType;
 
         // etc
         private KeyboardState lastKb;
@@ -58,7 +61,14 @@ namespace TestMonoGame
             storeTexture = Content.Load<Texture2D>("store");
             storeOrigin = new Vector2(storeTexture.Width / 2f, storeTexture.Height / 2f);
 
-            coinTexture = Content.Load<Texture2D>("coin");
+            var list = new List<Texture2D>();
+
+            list.Add(Content.Load<Texture2D>("coin"));
+            list.Add(Content.Load<Texture2D>("timmycoin"));
+            list.Add(Content.Load<Texture2D>("toastcoin"));
+            list.Add(Content.Load<Texture2D>("crabcoin"));
+
+            coinTextures = list.ToArray();
         }
 
         protected override void Update(GameTime gameTime)
@@ -92,13 +102,19 @@ namespace TestMonoGame
                 satoriFlip = true;
             }
 
+            // Swap coin type
+            if (kb.IsKeyDown(Keys.Space) && lastKb.IsKeyUp(Keys.Space))
+            {
+                coinType = (coinType + 1) % coinTextures.Length;
+            }
+
             // Make coin
-            if (kb.IsKeyDown(Keys.Space) && lastCoinThrow + COIN_COOLDOWN <= time)
+            if (mouse.LeftButton == ButtonState.Pressed && lastCoinThrow + COIN_COOLDOWN <= time)
             {
                 // figure out the toss angle!
                 var difference = mousePos - satoriPosition;
                 var angle = difference == Vector2.Zero ? 0f : (float)Math.Atan2(difference.Y, difference.X);
-                var coin = new Coin(time, satoriPosition, angle);
+                var coin = new Coin(time, satoriPosition, angle, coinType);
                 coins.Add(coin);
                 lastCoinThrow = time;
             }
@@ -128,7 +144,7 @@ namespace TestMonoGame
             _spriteBatch.Draw(satoriTexture, satoriPosition, null, Color.White, 0, satoriOrigin, Vector2.One, fx, 0);
 
             foreach (var coin in coins)
-                coin.Draw(_spriteBatch, coinTexture);
+                coin.Draw(_spriteBatch, coinTextures);
 
             _spriteBatch.End();
 

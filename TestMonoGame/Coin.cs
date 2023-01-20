@@ -21,6 +21,7 @@ namespace TestMonoGame
         public float rotation;
         public Vector2 velocity;
         public Vector2 position;
+        public int coinType;
 
         private float nextRotationVelocity()
         {
@@ -33,7 +34,7 @@ namespace TestMonoGame
             return new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
         }
 
-        public Coin(float tossTime, Vector2 position, float tossAngle)
+        public Coin(float tossTime, Vector2 position, float tossAngle, int coinType)
         {
             this.tossTime = tossTime;
             
@@ -42,6 +43,8 @@ namespace TestMonoGame
 
             this.position = position;
             this.velocity = SPEED * angleToVec(tossAngle);
+
+            this.coinType = coinType;
         }
 
         public void Update(float deltaTime)
@@ -52,7 +55,12 @@ namespace TestMonoGame
             rotation += rotationVelocity * deltaTime;
         }
 
-        public void Draw(SpriteBatch sb, Texture2D texture)
+        public void Draw(SpriteBatch sb, Texture2D[] textures)
+        {
+            drawInternal(sb, textures[coinType]);
+        }
+
+        private void drawInternal(SpriteBatch sb, Texture2D texture)
         {
             Vector2 origin = new Vector2(texture.Width / 2f, texture.Height / 2f);
             sb.Draw(texture, position, null, Color.White, rotation, origin, Vector2.One, SpriteEffects.None, 0);
