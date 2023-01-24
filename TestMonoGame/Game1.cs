@@ -67,6 +67,7 @@ namespace TestMonoGame
             list.Add(Content.Load<Texture2D>("timmycoin"));
             list.Add(Content.Load<Texture2D>("toastcoin"));
             list.Add(Content.Load<Texture2D>("crabcoin"));
+            list.Add(Content.Load<Texture2D>("cccoin"));
 
             coinTextures = list.ToArray();
         }
